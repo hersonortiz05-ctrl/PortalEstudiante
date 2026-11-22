@@ -1,0 +1,8 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inicio · Portal de Estudiantes</title><body><main class="container">
+<h1>Hola, {{ nombre_usuario }}</h1>
+{% if es_admin %}<p>Estudiantes: {{ total_estudiantes }}. Matrículas: {{ total_matriculas }}.</p>
+<a href="{% url 'admin:index' %}">Administración</a>
+{% else %}<h2>Mis materias</h2>{% for matricula in matriculas %}<p>{{ matricula.curso }} · {{ matricula.periodo }}</p>{% empty %}<p>No tenés matrículas registradas.</p>{% endfor %}{% endif %}
+<form method="post" action="/logout/">{% csrf_token %}<button>Cerrar sesión</button></form>
+</main></body></html>

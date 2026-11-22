@@ -63,13 +63,17 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# --- Base de datos: SQLite local si no hay DATABASE_URL, PostgreSQL si existe ---
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}
+# --- PostgreSQL obligatorio: no hay sustitución por SQLite ---
+from django.core.exceptions import ImproperlyConfigured
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+if not DATABASE_URL.startswith(("postgresql://", "postgres://")):
+    raise ImproperlyConfigured("Configurá DATABASE_URL con una conexión PostgreSQL.")
+DATABASES = {"default": dj_database_url.parse(
+    DATABASE_URL, conn_max_age=60, conn_health_checks=True,
+    ssl_require=os.getenv("DATABASE_SSL_REQUIRE", "True").lower() == "true",
+)}
+DATABASES["default"].setdefault("OPTIONS", {})["connect_timeout"] = 10
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -108,3 +112,11 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+# Clases compartidas definidas en el contrato visual de Paola.
+from django.contrib.messages import constants as message_constants
+MESSAGE_TAGS = {
+    message_constants.SUCCESS: "message--success",
+    message_constants.ERROR: "message--error",
+    message_constants.WARNING: "message--warning",
+    message_constants.INFO: "message--info",
+}
