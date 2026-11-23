@@ -1,0 +1,39 @@
+{% load static roles %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Campus · Portal de Estudiantes{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<header class="header">
+    <div class="container navbar">
+        <a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark">c.</span><span>campus<small>PORTAL DE ESTUDIANTES</small></span></a>
+        {% if user.is_authenticated %}
+        <nav class="navbar" aria-label="Navegación principal">
+            <a href="{% url 'dashboard' %}">Inicio</a>
+            {% if user|es_administrador %}
+            <a href="{% url 'carrera_lista' %}">Carreras</a>
+            <a href="{% url 'periodo_lista' %}">Períodos</a>
+            <a href="{% url 'curso_lista' %}">Cursos</a>
+            {% endif %}
+        </nav>
+        <div class="navbar account">
+            <span>{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn--quiet">Salir ↗</button></form>
+        </div>
+        {% endif %}
+    </div>
+</header>
+<main id="contenido" class="container main">
+    {% for message in messages %}<div class="message {{ message.tags }}" role="status">{{ message }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+</main>
+<footer class="container footer"><span>Grupo 1 · Portal de Estudiantes</span><span>Tu información, en un solo lugar.</span></footer>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
