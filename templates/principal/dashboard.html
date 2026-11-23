@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Inicio · Campus{% endblock %}
+{% block content %}
+<div class="page-heading"><p class="eyebrow">TU RESUMEN ACADÉMICO</p><h1>Hola, {{ nombre_usuario }}</h1><p class="muted">Un nuevo día para acercarte a tus metas.</p></div>
+{% if es_admin %}
+<section class="grid grid--two" aria-label="Resumen administrativo">
+    <article class="card stat"><p>Estudiantes registrados</p><strong>{{ total_estudiantes }}</strong></article>
+    <article class="card stat"><p>Matrículas registradas</p><strong>{{ total_matriculas }}</strong></article>
+</section>
+<section class="card section"><h2>Organizá tu campus</h2><p class="muted">Gestioná los catálogos académicos desde un solo lugar.</p><div class="navbar"><a class="btn btn--primary" href="{% url 'carrera_lista' %}">Carreras</a><a class="btn" href="{% url 'periodo_lista' %}">Períodos</a><a class="btn" href="{% url 'curso_lista' %}">Cursos</a></div></section>
+{% else %}
+<section class="welcome welcome--compact"><p class="eyebrow">CADA PASO CUENTA</p><h2>Tu aprendizaje continúa.</h2><p>Consultá las materias que forman parte de tu recorrido académico.</p></section>
+<section class="card section"><h2>Mis materias matriculadas</h2>
+    {% if estudiante %}<p class="muted">{{ estudiante.carrera }} · {{ estudiante.codigo }}</p>{% else %}<p class="message message--info">Tu cuenta aún no tiene un perfil vinculado. Contactá a administración.</p>{% endif %}
+    <div class="grid grid--two">
+    {% for matricula in matriculas %}<article class="course-card"><span class="badge">{{ matricula.curso.codigo }}</span><h3>{{ matricula.curso.nombre }}</h3><p class="muted">{{ matricula.periodo }}</p></article>{% empty %}<p class="empty">Todavía no tenés materias matriculadas.</p>{% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Ingresar · Campus{% endblock %}
+{% block content %}
+<div class="login-grid">
+    <section class="welcome">
+        <p class="eyebrow">TU ESPACIO ACADÉMICO</p>
+        <h1>Tu próximo paso<br>empieza aquí.</h1>
+        <p>Conectá con tu información académica<br>y seguí construyendo tu futuro.</p>
+        <div class="illustration" aria-hidden="true"><span>c.</span></div>
+        <p class="welcome-caption">APRENDÉ · CONECTÁ · AVANZÁ</p>
+    </section>
+    <section class="card login-card">
+        <p class="eyebrow">BIENVENIDO A CAMPUS</p>
+        <h2>Iniciá sesión</h2>
+        <p class="muted">Ingresá con la cuenta que te asignó administración.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for campo in form %}
+            <div class="form-group">{{ campo.label_tag }}{{ campo }}{{ campo.errors }}</div>
+            {% endfor %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+            <button class="btn btn--primary btn--full">Ingresar al portal →</button>
+        </form>
+        <p class="help">¿No podés ingresar? Contactá a administración para revisar tu cuenta.</p>
+    </section>
+</div>
+{% endblock %}
